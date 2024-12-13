@@ -331,6 +331,8 @@ print("\nData types:\n", fluprint_data.dtypes)
 
 assess_data_quality(fluprint_data)
 
+*#change necessary data types*
+
 In [263] : fluprint_data['vaccine_response'] = fluprint_data['vaccine_response'].astype('int64')
 
 print(fluprint_data.dtypes)
