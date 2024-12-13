@@ -187,3 +187,16 @@ statistic_test <- glm(vaccine_response ~ bmi + d_geo_mean,
 
 summary(statistic_test)
 ```
+
+# Machine learning 
+**First step is to get familiar with, load and explore the data. I used pandas for this: abbreviate pandas as pd**
+In [2]: import pandas as pd
+In [8] : # save filepath to variable for easier access
+fluprint_export_path = 'C:\\Users\\indra\\OneDrive\\Bureaublad\\LSAoBD.practicals\\R Project\\fluprint_export.csv' *
+#read and store data in dataframe fluprint_data
+fluprint_data = pd.read_csv(fluprint_export_path)
+#summary of data
+fluprint_data.head()
+fluprint_data.describe()
+fluprint_data.describe(include='all').loc[:, ['geo_mean', 'vaccine_response', 'name_formatted']] * 
+
