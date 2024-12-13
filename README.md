@@ -4,7 +4,7 @@
 ## H0: The infection history does not affect the vaccine response            (--> beide hypothesen zeggen hetzelfde? eentje moet aangepast worden)
 ## H1: The infection history does have an influence on the vaccine response
 
-**Load and install different packages and libraries that we will need during the visualisation as well of the statistical analysis on this dataset**
+**Load and install different packages and libraries that we will need during the visualisation as well of the statistical analysis on this dataset** (--> 'as well of ...' ?)
 ```{r Libraries}
 library(tidyverse)
 library(ggplot2)
@@ -114,7 +114,7 @@ fisher_test <- fisher.test(contingency_table)
 print(fisher_test)
 ```
 
-# Hypothesis 2: Multivariate analysis: Can differences in BMI-values and delta geo-mean-have a significant influence on the vaccine response?
+# Hypothesis 2: Multivariate analysis: Can differences in BMI-values and delta geo-mean have a significant influence on the vaccine response?
 ## H0: The BMI-values and the delta-geo-mean do not have an influence on the vaccine response.
 ## H1: The BMI-values and the delta-geo-mean do have an influence on the vaccine response.
 
