@@ -1,7 +1,7 @@
 # Influenza
 
-# Hypothesis 1: Does the infection history has an influence on the vaccine response?
-## H0: The infection history does not affect the vaccine response            
+# Hypothesis 1: Does the infection history have an influence on the vaccine response? 
+## H0: The infection history does not affect the vaccine response            (--> beide hypothesen zeggen hetzelfde? eentje moet aangepast worden)
 ## H1: The infection history does have an influence on the vaccine response
 
 **Load and install different packages and libraries that we will need during the visualisation as well of the statistical analysis on this dataset**
