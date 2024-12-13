@@ -97,7 +97,7 @@ colnames(table_df) <- c("vaccine_response", "infection_history", "Count")
 table_df
 ```
 
-**Create a heatmap**
+**Visualisation: a heatmap was created**
 ```{r}
 ggplot(table_df, aes(x = vaccine_response , y = infection_history , fill = Count)) +
   geom_tile() +
