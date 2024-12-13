@@ -4,32 +4,42 @@
 ## H0: The infection history does not affect the vaccine response            
 ## H1: The infection history does have an influence on the vaccine response
 
+**Load and install different packages and libraries that we will need during the visualisation as well of the statistical analysis on this dataset**
 ```{r Libraries}
 library(tidyverse)
 library(ggplot2)
+library(dplyr)
 ```
+
+**Read in the dataset**
 ```{r}
 data = read_csv('fluprint_export.csv')
 ```
+
+**Load and install the ggpubr package**
 ```{r QQPlot_Dummy}
 #load or install the ggpubr package
 install.packages("ggpubr")
 library(ggpubr)
 ```
+
+**Shape data to a metadata set that can be used for this first hypothesis, we deleted all unnecessary columns and fused all records from the same individual to only one record**
 ```{r}
 metadata <- data %>% select(-name, -name_formatted, -subset, -units, -data, -mesurment_id, -assay) %>% distinct() 
 ```
+
+**Confirm metadata is good to work with**
 ```{r}
 head(metadata)
 ```
+
+**Verify which datatype vaccine response and infection history are**
 ```{r}
 class(metadata$vaccine_response)
 class(metadata$influenza_infection_history)
 ```
-```{r}
-metadata$vaccine_response[metadata$vaccine_response == 'NULL'] <- NA
-metadata <- na.omit(metadata)
-```
+
+**Transform datatype of vaccine response and infection history to factor (categorical) and check whether the conversion succeeded**
 ```{r}
 metadata$vaccine_response <- as.factor(metadata$vaccine_response)
 metadata$influenza_infection_history <- as.factor(metadata$influenza_infection_history)
@@ -37,6 +47,28 @@ class(metadata$vaccine_response)
 class(metadata$influenza_infection_history)
 head(metadata)
 ```
+
+**Delete all NA-values by changing 'NULL' to NA and omit all NA-values afterwards**
+```{r}
+metadata$vaccine_response[metadata$vaccine_response == 'NULL'] <- NA
+metadata <- na.omit(metadata)
+```
+
+**Visualisation: a stacked bar plot was made**
+**First, the variables in the metadata were relabeled**
+```{r}
+metadata <- metadata %>%
+  mutate(
+    vaccine_response = factor(vaccine_response, 
+                              levels = c(0, 1), 
+                              labels = c("bad responder", "good responder")),
+    influenza_infection_history = factor(influenza_infection_history, 
+                                         levels = c(0, 1), 
+                                         labels = c("never infected", "ever infected"))
+  )
+```
+
+**Then, the stacked bar plot was made**
 ```{r}
 metadata %>%
   ggplot(aes(x=vaccine_response, fill=influenza_infection_history)) +
@@ -44,23 +76,29 @@ metadata %>%
     labs(title = "stacked Bar Plot", x = "vaccine response", fill = "infection history") +
     theme_classic()
 ```
+
+**Visualisation: a grouped bar plot was made**
 ```{r}
 ggplot(metadata, aes(x = vaccine_response, fill = influenza_infection_history)) +
   geom_bar(position = "dodge") +
   labs(title = "Grouped Bar Plot", x = "vaccine response", fill = "infection history")
 ```
+
+**Visualisation: a contingency table was made**
 ```{r}
 contingency_table <- table(metadata$vaccine_response, metadata$influenza_infection_history)
 print(contingency_table)
 ```
+
+**Convert contingency table to data frame for ggplot**
 ```{r}
-# Convert contingency table to data frame for ggplot
 table_df <- as.data.frame(table(metadata$vaccine_response, metadata$influenza_infection_history))
 colnames(table_df) <- c("vaccine_response", "infection_history", "Count")
 table_df
 ```
+
+**Create a heatmap**
 ```{r}
-# Create heatmap
 ggplot(table_df, aes(x = vaccine_response , y = infection_history , fill = Count)) +
   geom_tile() +
   scale_fill_gradient(low = "white", high = "red") +
@@ -69,8 +107,9 @@ ggplot(table_df, aes(x = vaccine_response , y = infection_history , fill = Count
        y = "influenza infection history", 
        fill = "count")
 ```
+
+**Statistical analysis: perform a fisher-test, we compare 2 categorical variables and low values are expected for the positive influenza histories.**
 ```{r}
-#fisher-test want lage values verwacht voor de positieve influenza histories. Ook omdat we 2 categorische variabelen vergelijken (niet meer, anders chi kwadraat test).
 fisher_test <- fisher.test(contingency_table)
 print(fisher_test)
 ```
