@@ -207,5 +207,38 @@ fluprint_data.head()
 
 fluprint_data.describe()
 
-fluprint_data.describe(include='all').loc[:, ['geo_mean', 'vaccine_response', 'name_formatted']] * 
+fluprint_data.describe(include='all').loc[:, ['geo_mean', 'vaccine_response', 'name_formatted']]
+
+In [38] : fluprint_data.columns
+
+# I want to select the high responders via the seroconversion (4-fold or greater rise in HAI titer) AND seroprotection (GMT ≥ 40). To do this, we need the fold change of the geo_mean (geo_mean_fold_change) and this would have to be higher than 4. 
+
+In [58] : fluprint_data['geo_mean_before'] = fluprint_data['geo_mean'] - fluprint_data['d_geo_mean']
+
+fluprint_data['geo_mean_fold_change'] = fluprint_data['geo_mean'] / fluprint_data['geo_mean_before']
+
+fluprint_data.loc[:, ['geo_mean', 'd_geo_mean', 'geo_mean_before', 'geo_mean_fold_change', 'vaccine_response']]
+
+In [74] : high_responders = fluprint_data[(fluprint_data['geo_mean'] >= 40) & (fluprint_data['geo_mean_fold_change'] >= 4)]				          
+
+high_responders
+
+In [78] : high_responders = fluprint_data[fluprint_data['vaccine_response'] == 1] 
+
+num_high_responders = len(high_responders)			             
+
+num_high_responders
+
+In [86] : high_responders.loc[:, ['geo_mean', 'd_geo_mean', 'geo_mean_before', 'geo_mean_fold_change', 'vaccine_response']]
+
+In [100] : high_responders = fluprint_data[(fluprint_data['geo_mean'] >= 40) & (fluprint_data['d_geo_mean'] >= 4)] 					              
+
+num_high_responders = len(high_responders)			              
+
+num_high_responders
+
+In [108] : fluprint_data.dropna(subset=['vaccine_response'], inplace=True)			    
+
+fluprint_data
+
 
