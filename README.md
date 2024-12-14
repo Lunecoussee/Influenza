@@ -118,18 +118,25 @@ print(fisher_test)
 ## H0: The BMI-values and the delta-geo-mean do not have an influence on the vaccine response.
 ## H1: The BMI-values and the delta-geo-mean do have an influence on the vaccine response.
 
+**A new metadataset was created for the second hypothesis and again all records of the same individual were fused**
 ```{r Libraries}
 metadata_hyp2 <- data %>% select(- study_id, -gender, -race, -visit_id, -visit_year, -visit_day, -visit_age, -name, -name_formatted, -subset, -units, -data, -mesurment_id, -assay) %>% distinct()
 ```
+
+**Take a look what our new metadataset looks like**
 ```{r Libraries}
 summary(metadata_hyp2)
 ```
+
+**First transform all variables that are character to numeric variables**
 ```{r Libraries}
 metadata$bmi <- as.numeric(metadata$bmi)
 metadata$geo_mean <- as.numeric(metadata$geo_mean)
 metadata$d_geo_mean <- as.numeric(metadata$d_geo_mean)
 metadata$total_vaccines_received <- as.numeric(metadata$total_vaccines_received)
 ```
+
+**Create a histogram for all variables that are left in the metadataset and search for the variable that is most likely to have a significant correlation with the vaccine response**
 ```{r}
 for (var in all_var_num) {
   all_histo = metadata_hyp2 %>%
@@ -141,6 +148,7 @@ for (var in all_var_num) {
 }
 ```
 
+**It was difficult to evaluate on these histograms whether there could be a relationship between one of the variables and the vaccine response, therefore, we also created boxplots of the different variables and the vaccine response for further visualization**
 ```{r}
 for (var in all_var_num) {
   all_boxp = metadata_hyp2 %>%
@@ -151,17 +159,22 @@ for (var in all_var_num) {
   print(all_boxp)
 }
 ```
+
+**We will work from now on with the two most promising values to be significant: bmi and d_geo_mean. All NA values were omitted from the metadataset**
 ```{r}
-# We will work from now on with the two most promising values to be significant: bmi and d_geo_mean.
 metadata_clean <- metadata_hyp2[, c('vaccine_response', 'bmi', 'd_geo_mean')]
 
 metadata_without_na <- na.omit(metadata_clean)
 ```
+
+**Transform the vaccine response levels 0 & 1 to a factor while labelling the 2 levels with low & high responders**
 ```{r}
 metadata_without_na$vaccine_response <- factor(metadata_without_na$vaccine_response,
   levels = c(0,1),
   labels = c("low responder", "high responder"))
 ```
+
+**Create for BMI as well as d_geo_mean a publication proof histogram**
 ```{r}
 metadata_without_na %>%
   ggplot(aes(x=bmi, fill=vaccine_response)) +
@@ -171,6 +184,8 @@ metadata_without_na %>%
   ggplot(aes(x=d_geo_mean, fill=vaccine_response)) +
   geom_histogram()
 ```
+
+**Create for BMI as well as d_geo_mean a publication proof boxplot**
 ```{r}
 metadata_without_na %>%
   ggplot(aes(x=vaccine_response, y=bmi, fill=vaccine_response)) +
@@ -180,6 +195,8 @@ metadata_without_na %>%
   ggplot(aes(x=vaccine_response, y=d_geo_mean, fill=vaccine_response)) +
   geom_boxplot()
 ```
+
+**Perform a multiple logistic regression**
 ```{r}
 statistic_test <- glm(vaccine_response ~ bmi + d_geo_mean,
                       data = metadata_without_na,
@@ -191,17 +208,17 @@ summary(statistic_test)
 # Machine learning 
 **First step is to get familiar with, load and explore the data. I used pandas for this: abbreviate pandas as pd**
 
-In [2]: import pandas as pd
+import pandas as pd
 
-In [8] : *#save filepath to variable for easier access*    
+**save filepath to variable for easier access**
 
 fluprint_export_path = 'C:\\Users\\indra\\OneDrive\\Bureaublad\\LSAoBD.practicals\\R Project\\fluprint_export.csv'
 
-*#read and store data in dataframe fluprint_data*
+**read and store data in dataframe fluprint_data**
 
 fluprint_data = pd.read_csv(fluprint_export_path)
 
-*#get a summary of data*
+**get a summary of data**
 
 fluprint_data.head()
 
@@ -211,7 +228,7 @@ fluprint_data.describe(include='all').loc[:, ['geo_mean', 'vaccine_response', 'n
 
 In [38] : fluprint_data.columns
 
-**I want to select the high responders via the seroconversion (4-fold or greater rise in HAI titer) AND seroprotection (GMT ≥ 40). To do this, we need the fold change of the geo_mean (geo_mean_fold_change) and this would have to be higher than 4.**
+**We want to select the high responders via the seroconversion (4-fold or greater rise in HAI titer) AND seroprotection (GMT ≥ 40). To do this, we need the fold change of the geo_mean (geo_mean_fold_change) and this would have to be higher than 4.**
 
 In [58] : fluprint_data['geo_mean_before'] = fluprint_data['geo_mean'] - fluprint_data['d_geo_mean']
 
@@ -219,39 +236,39 @@ fluprint_data['geo_mean_fold_change'] = fluprint_data['geo_mean'] / fluprint_dat
 
 fluprint_data.loc[:, ['geo_mean', 'd_geo_mean', 'geo_mean_before', 'geo_mean_fold_change', 'vaccine_response']]
 
-In [74] : high_responders = fluprint_data[(fluprint_data['geo_mean'] >= 40) & (fluprint_data['geo_mean_fold_change'] >= 4)]				          
+high_responders = fluprint_data[(fluprint_data['geo_mean'] >= 40) & (fluprint_data['geo_mean_fold_change'] >= 4)]				          
 
 high_responders
 
-In [78] : high_responders = fluprint_data[fluprint_data['vaccine_response'] == 1] 
+high_responders = fluprint_data[fluprint_data['vaccine_response'] == 1] 
 
 num_high_responders = len(high_responders)			             
 
 num_high_responders
 
-In [86] : high_responders.loc[:, ['geo_mean', 'd_geo_mean', 'geo_mean_before', 'geo_mean_fold_change', 'vaccine_response']]
+high_responders.loc[:, ['geo_mean', 'd_geo_mean', 'geo_mean_before', 'geo_mean_fold_change', 'vaccine_response']]
 
-In [100] : high_responders = fluprint_data[(fluprint_data['geo_mean'] >= 40) & (fluprint_data['d_geo_mean'] >= 4)] 					              
+high_responders = fluprint_data[(fluprint_data['geo_mean'] >= 40) & (fluprint_data['d_geo_mean'] >= 4)] 					              
 
 num_high_responders = len(high_responders)			              
 
 num_high_responders
 
-**What is said in the article about the high responders doesn't match with the dataset, I wanted to test this. I will just continue working with what the dataset says that high responders are, namely vaccine response = 1**
+**What is said in the article about the high responders doesn't match with the dataset, we wanted to test this. We will just continue working with what the dataset says that high responders are, namely vaccine response = 1**
 
-**I will start cleaning up the dataset and look at the immune cells we could use for the actual machine learning.**
+**We will start cleaning up the dataset and look at the immune cells we could use for the actual machine learning.**
 
-In [108] : fluprint_data.dropna(subset=['vaccine_response'], inplace=True)			  
+fluprint_data.dropna(subset=['vaccine_response'], inplace=True)			  
 
 fluprint_data
 
-*#check wether there really are no NA-values anymore in the column vaccine_response*
+**check wether there really are no NA-values anymore in the column vaccine_response**
 
-In [110] : print(fluprint_data['vaccine_response'].isna().sum())
+print(fluprint_data['vaccine_response'].isna().sum())
 
-*#count the number of unique immune cells*
+**count the number of unique immune cells**
 
-In [142] : filtered_cell_types = fluprint_data[fluprint_data['units'] == '% of Parent']	
+filtered_cell_types = fluprint_data[fluprint_data['units'] == '% of Parent']	
 
 unique_cell_types = filtered_cell_types['name_formatted'].unique()	
 
@@ -259,57 +276,55 @@ unique_cell_type_count = len(unique_cell_types)
 
 unique_cell_type_count
 
-*#check what the most named cell type is, maybe there is a correlation between this cell type and vaccine reponse*
+**check what the most named cell type is, maybe there is a correlation between this cell type and vaccine reponse**
 
 In [148] : most_named_cell_type = filtered_names['name_formatted'].value_counts().idxmax()  
 
 most_named_count = filtered_names['name_formatted'].value_counts().max()    
-
 print(f"The most named cell type is: {most_named_cell_type}")
 
 print(f"It appears {most_named_count} times in the dataset.")
 
-*#then count for every cell type how often it is named*
+**then count for every cell type how often it is named**
 
 In [154] : cell_type_count = filtered_names['name_formatted'].value_counts()		    
 
 cell_type_count
 
-*#now see if there are cell types that have a higher count in either low or high responders, again looking for a possible correlation*
+**now see if there are cell types that have a higher count in either low or high responders, again looking for a possible correlation**
 
-In [196] : cell_type_response = filtered_names.groupby(['name_formatted', 'vaccine_response']).size().reset_index(name='count')		    
+cell_type_response = filtered_names.groupby(['name_formatted', 'vaccine_response']).size().reset_index(name='count')		    
 
 cell_type_response
 
-*#the most named cell type was CD8_pos_T_cells, so maybe we can see a correlation here*
+**the most named cell type was CD8_pos_T_cells, so maybe we can see a correlation here**
 
-In [198] : cell_type_response.loc[cell_type_response['name_formatted'] == 'CD8_pos_T_cells']
+cell_type_response.loc[cell_type_response['name_formatted'] == 'CD8_pos_T_cells']
 
-*#maybe it's not about how often it is named, but about the abundance, so check this*
+**maybe it's not about how often it is named, but about the abundance, so check this**
 
-*#get the index of the cell type with highest ‘data’ value*
+**get the index of the cell type with highest ‘data’ value**
 
-In [204] : most_abundant_cell_type = filtered_names['data'].idxmax()	
+most_abundant_cell_type = filtered_names['data'].idxmax()	
 
-*#get its data*
+**get its data**
  	
 most_abundant_value = filtered_names.loc[most_abundant_cell_type, 'data'] 
 
-*#get the name of the cell type*
+**get the name of the cell type**
 
 cell_type = filtered_names.loc[most_abundant_cell_type, 'name_formatted']							       
-
 print(f"The most abundant cell type is: {cell_type}")				        
 
 print(f"It's value is {most_abundant_value}.")
 
-In [206] : cell_type_response.loc[cell_type_response['name_formatted'] == 'IFNa_B_cells']
+cell_type_response.loc[cell_type_response['name_formatted'] == 'IFNa_B_cells']
 
 **No satisfactory results, so start with the data quality assessment for the machine learning.**
 
-*#load and install different packages and libraries that we will need*
+**load and install different packages and libraries that we will need**
 
-In [231] : import numpy as np
+import numpy as np
 
 import matplotlib.pyplot as plt
 
@@ -317,57 +332,57 @@ import seaborn as sns
 
 from scipy import stats
 
-In [239] : def assess_data_quality(fluprint_data):
+def assess_data_quality(fluprint_data):
 
-*#check for duplicate rows*
+**check for duplicate rows**
 
 print("\nDuplicate rows:", fluprint_data.duplicated().sum())
 
-*#check data types*
+**check data types**
 
 print("\nData types:\n", fluprint_data.dtypes)
 
-*#perform data quality assessment*
+**perform data quality assessment**
 
 assess_data_quality(fluprint_data)
 
-*#change necessary data types*
+**change necessary data types**
 
-In [263] : fluprint_data['vaccine_response'] = fluprint_data['vaccine_response'].astype('int64')
+fluprint_data['vaccine_response'] = fluprint_data['vaccine_response'].astype('int64')
 
 print(fluprint_data.dtypes)
 
-*#make a new, smaller dataframe to work with*
+**make a new, smaller dataframe (metadataset) to work with**
 
-In [290] : columns_to_keep = ['donor_id', 'vaccine_response', 'name_formatted', 'subset', 'units', 'data']
+columns_to_keep = ['donor_id', 'vaccine_response', 'name_formatted', 'subset', 'units', 'data']
 
 fluprint_clean_data = fluprint_data[columns_to_keep]
 
 fluprint_clean_data
 
-*#we only want the immune cells and not the chemokines*
+**we only want the immune cells and not the chemokines**
 
-In [294] : fluprint_clean = fluprint_clean_data[fluprint_clean_data['units'] == '% of Parent']
+fluprint_clean = fluprint_clean_data[fluprint_clean_data['units'] == '% of Parent']
 
 fluprint_clean
 
-*#check wether the number of rows in the new dataframe is the same as in the original and we didn't accidently delete necessary columns*
+**check wether the number of rows in the new dataframe is the same as in the original and we didn't accidently delete necessary columns**
 
-In [301] : count = (fluprint_data['units'] == '% of Parent').sum()
+count = (fluprint_data['units'] == '% of Parent').sum()
 
 print(f"Number of rows where 'unit' is '% of Parent': {count}")
 
-*#calculate the Z-score to check for outliers*
+**calculate the Z-score to check for outliers**
 
-In [363] : z_scores = stats.zscore(fluprint_clean['data'])
+z_scores = stats.zscore(fluprint_clean['data'])
 
 outliers = (np.abs(z_scores) > 3).sum(axis=0)
 
 print("\nNumber of outliers (Z-score > 3):\n", outliers)
 
-*#same, but with a boxplot now to check for outliers*
+**same, but with a boxplot now to check for outliers**
 
-In [397] : plt.figure(figsize=(8, 6))
+plt.figure(figsize=(8, 6))
 
 fluprint_clean.boxplot(column=['data'])
 
@@ -375,15 +390,15 @@ plt.title('Box Plot for data')
 
 plt.show()
 
-*#we calculate class balance, because when there is an inbalance, the model might be biased to predict toward the majority class*
+**We calculate class balance, because when there is an inbalance, the model might be biased to predict toward the majority class**
 
-In [365] : class_balance = fluprint_clean['vaccine_response'].value_counts(normalize=True)
+class_balance = fluprint_clean['vaccine_response'].value_counts(normalize=True)
 
 print("\nClass balance:\n", class_balance)
 
-*#using Seaborn, we make a plot to visualize class inbalance*
+**using Seaborn, we make a plot to visualize class inbalance**
 
-In [367] : plt.figure(figsize=(8, 6))
+plt.figure(figsize=(8, 6))
 
 sns.countplot(x='vaccine_response', data=fluprint_clean)
 
@@ -391,9 +406,9 @@ plt.title('Class Distribution')
 
 plt.show()
 
-*#reassure there are no NA-values*
+**reassure there are no NA-values**
 
-In [391] : result = fluprint_clean[fluprint_clean['data'].isnull()]
+result = fluprint_clean[fluprint_clean['data'].isnull()]
 
 len(result)
 
