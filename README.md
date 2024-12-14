@@ -130,10 +130,18 @@ summary(metadata_hyp2)
 
 **First transform all variables that are character to numeric variables**
 ```{r Libraries}
-metadata$bmi <- as.numeric(metadata$bmi)
-metadata$geo_mean <- as.numeric(metadata$geo_mean)
-metadata$d_geo_mean <- as.numeric(metadata$d_geo_mean)
-metadata$total_vaccines_received <- as.numeric(metadata$total_vaccines_received)
+metadata_hyp2$bmi <- as.numeric(metadata_hyp2$bmi)
+metadata_hyp2$geo_mean <- as.numeric(metadata_hyp2$geo_mean)
+metadata_hyp2$d_geo_mean <- as.numeric(metadata_hyp2$d_geo_mean)
+metadata_hyp2$total_vaccines_received <- as.numeric(metadata_hyp2$total_vaccines_received)
+```
+**Check the amount of missing values in these variables**
+```{r}
+colSums(is.na(metadata_hyp2))
+```
+**Group these variables together under 1 variable**
+```{r}
+all_var_num <- c("bmi", "geo_mean", "d_geo_mean", "total_vaccines_received")
 ```
 
 **Create a histogram for all variables that are left in the metadataset and search for the variable that is most likely to have a significant correlation with the vaccine response**
@@ -142,7 +150,9 @@ for (var in all_var_num) {
   all_histo = metadata_hyp2 %>%
   filter(vaccine_response %in% c("0","1")) %>%
   ggplot(aes_string(x=var, fill="factor(vaccine_response)")) +
-  geom_histogram()
+  geom_histogram() +
+  theme_classic() +
+  labs(title=paste("Histogram of",var))
 
   print(all_histo)
 }
@@ -152,9 +162,11 @@ for (var in all_var_num) {
 ```{r}
 for (var in all_var_num) {
   all_boxp = metadata_hyp2 %>%
-  filter(vaccine_response %in% c("0","1")) %>% |
+  filter(vaccine_response %in% c("0","1")) %>% 
   ggplot(aes_string(x="factor(vaccine_response)", y=var, fill="factor(vaccine_response)")) +
-  geom_boxplot()
+  geom_boxplot() +
+  theme_classic() +
+  labs(title=paste("Boxplot of", var))
 
   print(all_boxp)
 }
