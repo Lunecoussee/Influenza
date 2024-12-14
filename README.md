@@ -190,22 +190,30 @@ metadata_without_na$vaccine_response <- factor(metadata_without_na$vaccine_respo
 ```{r}
 metadata_without_na %>%
   ggplot(aes(x=bmi, fill=vaccine_response)) +
-  geom_histogram()
+  geom_histogram() +
+  theme_classic() +
+  labs(title=paste("Histogram of bmi without NA-values"))
 
 metadata_without_na %>%
   ggplot(aes(x=d_geo_mean, fill=vaccine_response)) +
-  geom_histogram()
+  geom_histogram() +
+  theme_classic() +
+  labs(title=paste("Histogram of d_geo_mean without NA-values"))
 ```
 
 **Create for BMI as well as d_geo_mean a publication proof boxplot**
 ```{r}
 metadata_without_na %>%
   ggplot(aes(x=vaccine_response, y=bmi, fill=vaccine_response)) +
-  geom_boxplot()
+  geom_boxplot() +
+  theme_classic() +
+  labs(title=paste("Boxplot of bmi without NA-values"))
 
 metadata_without_na %>%
   ggplot(aes(x=vaccine_response, y=d_geo_mean, fill=vaccine_response)) +
-  geom_boxplot()
+  geom_boxplot() +
+  theme_classic() +
+  labs(title=paste("Boxplot of d_geo_mean without NA-values"))
 ```
 
 **Perform a multiple logistic regression**
