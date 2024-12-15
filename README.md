@@ -71,17 +71,17 @@ metadata <- metadata %>%
 **Then, the stacked bar plot was made**
 ```{r}
 metadata %>%
-  ggplot(aes(x=vaccine_response, fill=influenza_infection_history)) +
+  ggplot(aes(x=influenza_infection_history, fill=vaccine_response)) +
     geom_bar() +
-    labs(title = "stacked Bar Plot; vaccine response vs infection history", x = "vaccine response", fill = "infection history") +
+    labs(title = "Stacked Bar Plot: Impact of Infection History on Vaccine Response", x = "infection history", fill = "vaccine response") +
     theme_classic()
 ```
 
 **Visualisation: a grouped bar plot was made**
 ```{r}
-ggplot(metadata, aes(x = vaccine_response, fill = influenza_infection_history)) +
+ggplot(metadata, aes(x = influenza_infection_history, fill = vaccine_response)) +
   geom_bar(position = "dodge") +
-  labs(title = "Grouped Bar Plot: vaccine response vs infection history", x = "vaccine response", fill = "infection history")
+  labs(title = "Grouped Bar Plot: Impact of Infection History on Vaccine Response", x = "infection history", fill = "vaccine response")
 ```
 
 **Visualisation: a contingency table was made**
@@ -99,12 +99,13 @@ table_df
 
 **Visualisation: a heatmap was created**
 ```{r}
-ggplot(table_df, aes(x = vaccine_response , y = infection_history , fill = Count)) +
+# Create heatmap
+ggplot(table_df, aes(x = infection_history , y = vaccine_response , fill = Count)) +
   geom_tile() +
   scale_fill_gradient(low = "white", high = "red") +
-  labs(title = "Heatmap of vaccine response vs infection history", 
-       x = "vaccine response", 
-       y = "influenza infection history", 
+  labs(title = "Heatmap of infection history vs vaccine response", 
+       x = "influenza infection history", 
+       y = "vaccine response", 
        fill = "count")
 ```
 
