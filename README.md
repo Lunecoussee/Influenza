@@ -1,6 +1,6 @@
 # Influenza
 
-# Hypothesis 1:
+# Hypothesis 1: Testing two categorical variables against each other
 ## H0: The infection history does not have an influence on the vaccine response
 ## H1: The infection history does have an influence on the vaccine response
 
