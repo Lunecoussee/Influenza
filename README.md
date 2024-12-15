@@ -61,7 +61,7 @@ metadata <- metadata %>%
   mutate(
     vaccine_response = factor(vaccine_response, 
                               levels = c(0, 1), 
-                              labels = c("bad responder", "good responder")),
+                              labels = c("low responder", "high responder")),
     influenza_infection_history = factor(influenza_infection_history, 
                                          levels = c(0, 1), 
                                          labels = c("never infected", "ever infected"))
@@ -73,7 +73,7 @@ metadata <- metadata %>%
 metadata %>%
   ggplot(aes(x=vaccine_response, fill=influenza_infection_history)) +
     geom_bar() +
-    labs(title = "stacked Bar Plot", x = "vaccine response", fill = "infection history") +
+    labs(title = "stacked Bar Plot; vaccine response vs infection history", x = "vaccine response", fill = "infection history") +
     theme_classic()
 ```
 
@@ -81,7 +81,7 @@ metadata %>%
 ```{r}
 ggplot(metadata, aes(x = vaccine_response, fill = influenza_infection_history)) +
   geom_bar(position = "dodge") +
-  labs(title = "Grouped Bar Plot", x = "vaccine response", fill = "infection history")
+  labs(title = "Grouped Bar Plot: vaccine response vs infection history", x = "vaccine response", fill = "infection history")
 ```
 
 **Visualisation: a contingency table was made**
