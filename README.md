@@ -4,7 +4,7 @@
 ## H0: The infection history does not have an influence on the vaccine response
 ## H1: The infection history does have an influence on the vaccine response
 
-**Load and install different packages and libraries that we will need during the visualisation as well of the statistical analysis on this dataset** (--> 'as well of ...' ?)
+**Load and install different packages and libraries that we will need during the visualisation as well as the statistical analysis on this dataset**
 ```{r Libraries}
 library(tidyverse)
 library(ggplot2)
