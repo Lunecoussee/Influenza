@@ -225,6 +225,11 @@ statistic_test <- glm(vaccine_response ~ bmi + d_geo_mean,
 summary(statistic_test)
 ```
 
+**Determine the 95% confidence interval**
+```{r}
+confint(model_no_missing)
+```
+
 # Machine learning 
 **First step is to get familiar with, load and explore the data. I used pandas for this: abbreviate pandas as pd**
 
